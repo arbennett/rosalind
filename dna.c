@@ -13,20 +13,17 @@
 #include <stdio.h>
 #include <string.h>
 
-#define BUFFER_SIZE 1000
+#define BUFFER_SIZE 2000
 
 int main(){
 	char dna[BUFFER_SIZE];
-	int i, size, counts[4];
+	int i, size;
 	char *nt = NULL;
 	printf("Loading input.txt...\n");
 	FILE *in = fopen("input.txt", "r");
 
 	/* Initialize the nucleotide count */
-	counts[0] = 0;
-	counts[1] = 0;
-	counts[2] = 0;
-	counts[3] = 0;
+	int counts[4] = {0, 0, 0, 0};
 
 	/*  Make sure the file exists	 */
 	if(in == NULL){
@@ -38,14 +35,19 @@ int main(){
 	/*  Iterate through BUFFER_SIZE characters at a time */
 	while (fgets(dna,BUFFER_SIZE - 1, in)!=NULL){
 		printf("%s", dna);
-		for(i = 0 ; i < BUFFER_SIZE - 1 ; i++){
+		size = strlen(dna);
+		for(i = 0 ; i < size ; i++){
 			if( dna[i] == 'A'){
+				printf("Counting A , %c found\n", dna[i]);
 				++counts[0];
 			}else if( dna[i] == 'C'){
+				printf("Counting C , %c found \n", dna[i]);
 				++counts[1];
 			}else if( dna[i] == 'G'){
+				printf("Counting G , %c found \n", dna[i]);
 				++counts[2];
 			}else if( dna[i] == 'T'){
+				printf("Counting T , %c found\n", dna[i]);
 				++counts[3];
 			}
 		}
