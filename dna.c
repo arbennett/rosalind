@@ -38,16 +38,12 @@ int main(){
 		size = strlen(dna);
 		for(i = 0 ; i < size ; i++){
 			if( dna[i] == 'A'){
-				printf("Counting A , %c found\n", dna[i]);
 				++counts[0];
 			}else if( dna[i] == 'C'){
-				printf("Counting C , %c found \n", dna[i]);
 				++counts[1];
 			}else if( dna[i] == 'G'){
-				printf("Counting G , %c found \n", dna[i]);
 				++counts[2];
 			}else if( dna[i] == 'T'){
-				printf("Counting T , %c found\n", dna[i]);
 				++counts[3];
 			}
 		}
