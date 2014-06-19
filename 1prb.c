@@ -52,14 +52,28 @@
 int main(int argc, char **argv){
 	if(argc != 4){
 		printf("Incorrect number of arguments.  Input format is: \n");
-		printf("Homozygous Dominant, Heterozygous Dominant, Homozygous Recessive \n");
+		printf("Homozygous-Dominant Heterozygous-Dominant Homozygous-Recessive \n");
 		return 1;
 	}
 
-	long l = strtol(argv[1], NULL, 0) - 1;
-	long m = strtol(argv[2], NULL, 0) - 1;
-	long n = strtol(argv[3], NULL, 0) - 1;
-	double prob = 1. -  pow(2.0,-n);
+	/* Casting to keep values to integer values as well as flexibility */
+	double a = (double) strtol(argv[1], NULL, 0);
+	double b = (double) strtol(argv[2], NULL, 0);
+	double c = (double) strtol(argv[3], NULL, 0);
+	double N = a+b+c;
+
+	if (2 > N){
+		printf("You need to have a larger population to breed! \n");
+		return 1;
+	}
+
+	double prob = (a/N) 				/* Probability to pick a dominant first */
+			+ (b/N)*a/(N-1.) 			/* Probability to pick a hetero then a dominant */
+			+ (.75)*(b/N)*(b-1.)/(N-1.) /* Probability to pick two hetero  */
+			+ (.5)*(b/N)*c/(N-1.)		/* Probability to pick a hetero then a recessive */
+			+ (c/N)*a/(N-1.)			/* Probability to pick a recessive then a dominant */
+			+ (.5)*(c/N)*b/(N-1.);		/* Probability to pick a recessive then a hetero */
 	printf("%f \n", prob);
+	return 0;
 }
 
