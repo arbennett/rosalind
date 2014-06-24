@@ -37,15 +37,6 @@
  *      Author: Andrew Bennett
  */
 #include <stdio.h>
-#include <string.h>
-#include <math.h>
-
-/*
- * Solution:
- * Let N=l+m+n where n is the number of homozygous recessive parents, then there are 2^N total
- * possibilities and 2^n possible recessive phenotypical offspring  Therefore the correct answer
- * is 1-((2^n)/(2^N)) = 1-2^(n-N).
- */
 
 int main(int argc, char **argv){
 	if(argc != 3){
@@ -54,21 +45,21 @@ int main(int argc, char **argv){
 		return 1;
 	}
 
-	/* Casting to keep values to integer values as well as flexibility */
-	long result;
+	/* Read in parameters */
 	long N = strtol(argv[1], NULL, 0);
 	long k = strtol(argv[2], NULL, 0);
-	long f0 = 0;
-	long f1 = 1;
+	long long result[N];
+	result[0]=1;
+	result[1]=1;
+	printf("%d \n", result[0]);
+	printf("%d \n", result[1]);
 	int i;
-	/* Just a simple loop to start */
-	for(i = 0; i <= N ; i++){
-		result = f0 + f1;
-		f0=f1;
-		f1=result;
+	/* Might as well store them all and print them all*/
+	for(i = 2; i < N ; i++){
+		result[i] = result[i-1] + k*result[i-2];
+		printf("%lld \n", result[i]);
 	}
 
-	printf("%d \n", result);
 	return 0;
 }
 
