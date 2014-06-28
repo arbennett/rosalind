@@ -21,10 +21,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#define BUFFER_SIZE 2000
+#define BUFFER_SIZE 3
+
+char rnaLookup(char rna[]);
+void printError();
 
 int main(){
-	char dna[BUFFER_SIZE];
+	char rna[BUFFER_SIZE];
 	int i, size;
 	char *nt = NULL;
 	printf("Loading input.txt...\n");
@@ -37,150 +40,286 @@ int main(){
 	}
 
 	/*  Iterate through BUFFER_SIZE characters at a time */
-	while (fgets(dna,BUFFER_SIZE - 1, in)!=NULL){
-		/* Go through 3 at a time and look it up in the table */
-		/* proteins[i]=rnaLookup('abc');
+	while (fgets(rna,BUFFER_SIZE+1, in)!=NULL){
+		char prot = rnaLookup(rna);
+		printf("%c", prot);
 	}
-
+    printf("\n");
 	/* Print out the results */
 	fclose(in);
 	return 0;
 }
 
-char rnaLookup(char rna[]){
-	switch (rna){
-	case 'UUU':
-		return 'F';
-	case 'UUC':
-		return 'F';
-	case 'UUA':
-		return 'L';
-	case 'UUG':
-		return 'L';
-	case 'CUU':
-		return 'L';
-	case 'CUC':
-		return 'L';
-	case 'CUA':
-		return 'L';
-	case 'CUG':
-		return 'L';
-	case 'AUU':
-		return 'I';
-	case 'AUC':
-		return 'I';
-	case 'AUA':
-		return 'I';
-	case 'AUG':
-		return 'M';
-	case 'GUU':
-		return 'V';
-	case 'GUC':
-		return 'V';
-	case 'GUA':
-		return 'V';
-	case 'GUG':
-		return 'V';
-	case 'UCU':
-		return 'S';
-	case 'UCC':
-		return 'S';
-	case 'UCA':
-		return 'S';
-	case 'UCG':
-		return 'S';
-	case 'CCU':
-		return 'P';
-	case 'CCC':
-		return 'P';
-	case 'CCA':
-		return 'P';
-	case 'CCG':
-		return 'P';
-	case 'ACU':
-		return 'T';
-	case 'ACC':
-		return 'T';
-	case 'ACA':
-		return 'T';
-	case 'ACG':
-		return 'T';
-	case 'GCU':
-		return 'A';
-	case 'GCC':
-		return 'A';
-	case 'GCA':
-		return 'A';
-	case 'GCG':
-		return 'A';
-	case 'UAU':
-		return 'Y';
-	case 'UAC':
-		return 'Y';
-	case 'UAA':
-		return '\n';
-	case 'UAG':
-		return '\n';
-	case 'CAU':
-		return 'H';
-	case 'CAC':
-		return 'H';
-	case 'CAA':
-		return 'Q';
-	case 'CAG':
-		return 'Q';
-	case 'AAU':
-		return 'N';
-	case 'AAC':
-		return 'N';
-	case 'AAA':
-		return 'K';
-	case 'AAG':
-		return 'K';
-	case 'GAU':
-		return 'D';
-	case 'GAC':
-		return 'D';
-	case 'GAA':
-		return 'E';
-	case 'GAG':
-		return 'E';
-	case 'UGU':
-		return 'C';
-	case 'UGC':
-		return 'C';
-	case 'UGA':
-		return '\n';
-	case 'UGG':
-		return 'W';
-	case 'CGU':
-		return 'R';
-	case 'CGC':
-		return 'R';
-	case 'CGA':
-		return 'R';
-	case 'CGG':
-		return 'R';
-	case 'AGU':
-		return 'S';
-	case 'AGC':
-		return 'S';
-	case 'AGA':
-		return 'R';
-	case 'AGG':
-		return 'R';
-	case 'GGU':
-		return 'G';
-	case 'GGC':
-		return 'G';
-	case 'GGA':
-		return 'G';
-	case 'GGG':
-		return 'G';
+/**
+ * Putting this in a nested switch-case leads to
+ * log base 4 order lookup tree.
+ */
+char rnaLookup(char *rna){
+	char prot;
+	switch (rna[0]){
+	// First nucleotide is U
+	case 'U':
+		switch (rna[1]){
+		// UU
+		case 'U':
+			switch (rna[2]){
+			// UUU
+			case 'U':
+				prot = 'F';
+				break;
+			// UUC
+			case 'C':
+				prot = 'F';
+				break;
+			// UUA
+			case 'A':
+				prot = 'L';
+				break;
+			// UUG
+			case 'G':
+				prot = 'L';
+				break;
+			default:
+				printError();
+				break;
+			}
+			break;
+		// UC
+		case 'C':
+			prot = 'S';
+			break;
+		// UA
+		case 'A':
+			switch (rna[2]){
+			// UAU
+			case 'U':
+				prot = 'Y';
+				break;
+			// UAC
+			case 'C':
+				prot = 'Y';
+				break;
+			// UAA
+			case 'A':
+				prot = '\n';
+				break;
+			// UAG
+			case 'G':
+				prot = '\n';
+				break;
+			default:
+				printError();
+				break;
+			}
+			break;
+		// UG
+		case 'G':
+			switch (rna[2]){
+			// UGU
+			case 'U':
+				prot = 'C';
+				break;
+			// UGC
+			case 'C':
+				prot = 'C';
+				break;
+			// UGA
+			case 'A':
+				prot = '\n';
+				break;
+			// UGG
+			case 'G':
+				prot = 'W';
+				break;
+			default:
+				printError();
+				break;
+			}
+			break;
+		default:
+			printError();
+			break;
+		}
+		break;
+	// First nucleotide is C
+	case 'C':
+		switch (rna[1]){
+		// CU
+		case 'U':
+			prot = 'L';
+			break;
+		// CC
+		case 'C':
+			prot = 'P';
+			break;
+		// UA
+		case 'A':
+			switch (rna[2]){
+			// CAU
+			case 'U':
+				prot = 'H';
+				break;
+			// CAC
+			case 'C':
+				prot = 'H';
+				break;
+			// CAA
+			case 'A':
+				prot = 'Q';
+				break;
+			// CAG
+			case 'G':
+				prot = 'Q';
+				break;
+			default:
+				printError();
+				break;
+			}
+			break;
+		// CG
+		case 'G':
+			prot = 'R';
+			break;
+		default:
+			printError();
+			break;
+		}
+		break;
+	// First nucleotide is A
+	case 'A':
+		switch (rna[1]){
+		// AU
+		case 'U':
+			switch (rna[2]){
+			// AUU
+			case 'U':
+				prot = 'I';
+				break;
+			// AUC
+			case 'C':
+				prot = 'I';
+				break;
+			// AUA
+			case 'A':
+				prot = 'I';
+				break;
+			// AUG
+			case 'G':
+				prot = 'M';
+				break;
+			default:
+				printError();
+				break;
+			}
+			break;
+		// AC
+		case 'C':
+			prot = 'T';
+			break;
+		// AA
+		case 'A':
+			switch (rna[2]){
+			// AAU
+			case 'U':
+				prot = 'N';
+				break;
+			// AAC
+			case 'C':
+				prot = 'N';
+				break;
+			// AAA
+			case 'A':
+				prot = 'K';
+				break;
+			// AAG
+			case 'G':
+				prot = 'K';
+				break;
+			default:
+				printError();
+				break;
+			}
+			break;
+		// AG
+		case 'G':
+			switch (rna[2]){
+			// AGU
+			case 'U':
+				prot = 'S';
+				break;
+			// AGC
+			case 'C':
+				prot = 'S';
+				break;
+			// AGA
+			case 'A':
+				prot = 'R';
+				break;
+			// AGG
+			case 'G':
+				prot = 'R';
+				break;
+			default:
+				printError();
+				break;
+			}
+			break;
+		default:
+			printError();
+			break;
+		}
+		break;
+	// First nucleotide is G
+	case 'G':
+		switch (rna[1]){
+		// GU
+		case 'U':
+			prot = 'V';
+			break;
+		// GC
+		case 'C':
+			prot = 'A';
+			break;
+		// GA
+		case 'A':
+			switch (rna[2]){
+			// GAU
+			case 'U':
+				prot = 'D';
+				break;
+			// GAC
+			case 'C':
+				prot = 'D';
+				break;
+			// GAA
+			case 'A':
+				prot = 'E';
+				break;
+			// GAG
+			case 'G':
+				prot = 'E';
+				break;
+			default:
+				printError();
+				break;
+			}
+			break;
+		// CG
+		case 'G':
+			prot = 'G';
+			break;
+		default:
+			printError();
+			break;
+		}
+		break;
 	default:
-		printf("ERROR: Incorrect RNA string.  Check your input file for errors.");
+		printError();
 		break;
 	}
-	return 'Z';
+	return prot;
 }
 
+void printError(){
+	return;
+}
