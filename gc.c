@@ -31,11 +31,10 @@
 #define LABEL_SIZE 13
 
 int main(){
-	char dna[BUFFER_SIZE], label[LABEL_SIZE], tempLabel[LABEL_SIZE+1], ind[2];
+	char dna[BUFFER_SIZE], label[LABEL_SIZE], tempLabel[LABEL_SIZE+1], maxGC_label[LABEL_SIZE+1], ind[2];
 	int i, size, totalCount, gcCount;
 	double currentGC = 0.0;
 	double maxGC = 0.0;
-	char *maxGC_label = "Rosalind_XXXX";
 	printf("Loading input.txt...\n");
 	FILE *in = fopen("input.txt", "r");
 
@@ -49,23 +48,23 @@ int main(){
 	while (fgets(ind, 2, in)!=NULL){
 		/* Check if we are starting a new label */
 		if(ind[0] == '>'){
-			currentGC=gcCount/(double)totalCount;
+			currentGC=gcCount/(double)(totalCount-1);
+			printf("\n\n%s\n%f", tempLabel, currentGC);
 			if( currentGC > maxGC ){
 				maxGC = currentGC;
-				maxGC_label = tempLabel;
+				strcpy(maxGC_label, tempLabel);
 			}
+
 			totalCount = 0;
 			gcCount = 0;
 			/* If it is, record the label */
-			printf("\n%f",currentGC);
 			if (fgets(tempLabel, LABEL_SIZE+1, in)==NULL){
 				printf("Error getting label.");
 			} else {
-				printf("\n\n%s : \n", tempLabel);
+				//printf("\n\n%s : \n", tempLabel);
 			}
 		/* Otherwise it might contribute to GC-Content */
 		} else {
-			printf("%c", ind[0]);
 			if (ind[0]=='G' || ind[0]=='C') {
 				gcCount++;
 				totalCount++;
@@ -75,7 +74,6 @@ int main(){
 				size = strlen(dna);
 				totalCount+=size;
 				for( i=0; i<size; i++){
-					printf("%c",dna[i]);
 					if(dna[i]=='G' || dna[i]=='C'){
 						gcCount++;
 					}
@@ -87,8 +85,14 @@ int main(){
 		}
 	}
 // Need to calculate gc for final dna string - make it a function for ease
+	currentGC=gcCount/(double)(totalCount);
+	printf("\n\n%s\n%f", tempLabel, currentGC);
+	if( currentGC > maxGC ){
+		maxGC = currentGC;
+		strcpy(maxGC_label, tempLabel);
+	}
 	maxGC=100.0*maxGC;
-	printf("%s \n%f \n", maxGC_label, maxGC);
+	printf("\n---------------------------------------------------------------\n%s \n%f \n", maxGC_label, maxGC);
 	/* Print out the results */
 	fclose(in);
 	return 0;
