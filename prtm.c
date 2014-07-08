@@ -46,11 +46,12 @@
 #include <stdio.h>
 #include <string.h>
 
+double getWeight(int aa);
+
 int main(){
 	char aa[BUFFER_SIZE];
 	int i;
-	float weight = 0.0;
-	float item;
+	double weight = 0.0;
 	printf("Loading input.txt...\n");
 	FILE *in = fopen("input.txt", "r");
 
@@ -63,9 +64,7 @@ int main(){
 	/*  Iterate through BUFFER_SIZE characters at a time */
 	while (fgets(aa,BUFFER_SIZE - 1, in)!=NULL){
 		for(i=0; i<strlen(aa); i++){
-			item = 'S';
-			printf("%f\n", item);
-			weight+=1.0*aa[i]; // add em up
+			weight+=getWeight(aa[i]-65); // offset 65 for ascii
 		}
 	}
 
@@ -73,4 +72,44 @@ int main(){
 	printf("%f \n", weight);
 	fclose(in);
 	return 0;
+}
+
+/* Gross, but should be fast.  Made it a function
+ * to keep the bulk of the code clean. */
+double getWeight(int aa){
+	double weights[26];
+	weights[0] = 71.03711;   // a
+	weights[1] = 0.000000;    // b - doesn't exist
+	weights[2] = 103.00919;  // c
+	weights[3] = 115.02694;  // d
+	weights[4] = 129.04259;  // e
+	weights[5] = 147.06841;  // f
+	weights[6] = 57.02146;   // g
+	weights[7] = 137.05891;  // h
+	weights[8] = 113.08406;  // i
+	weights[9] = 0.000000;    // j - doesn't exist
+	weights[10] = 128.09496; // k
+	weights[11] = 113.08406; // l
+	weights[12] = 131.04049; // m
+	weights[13] = 114.04293; // n
+	weights[14] = 0.000000;   // o - doesn't exist
+	weights[15] = 97.05276;  // p
+	weights[16] = 128.05858; // q
+	weights[17] = 156.10111; // r
+	weights[18] = 87.03203;  // s
+	weights[19] = 101.04768; // t
+	weights[20] = 0.000000;   // u - doesn't exist
+	weights[21] = 99.06841;  // v
+	weights[22] = 186.07931; // w
+	weights[23] = 0.00000;   // x - doesn't exist
+	weights[24] = 163.06333; // y
+	weights[25] = 0.000000;   // z - doesn't exist
+
+	/* return the weight */
+	if( aa < 26 && aa > -1){
+		return weights[aa];
+	}else{
+		printf("Error: input was %i.", aa);
+		return 0.00; // we just wont count invalid input
+	}
 }
